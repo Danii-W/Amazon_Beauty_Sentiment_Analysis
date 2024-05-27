@@ -103,6 +103,7 @@ ui <- navbarPage(
                solidHeader = TRUE,
                width = 12,
                height = "700px",
+               radioButtons("wordCloudTypeUsers", "Select Type:", choices = c("Verified", "Unverified"), selected = "Verified"),
                imageOutput("wordCloudImageUsers", height = "600px"),
                uiOutput("missingImageMessageUsers"),
                selectInput("yearUsers", "Year:", choices = 2008:2018, width = '100%')
@@ -127,6 +128,7 @@ ui <- navbarPage(
                solidHeader = TRUE,
                width = 12,
                height = "700px",
+               radioButtons("wordCloudTypeReviews", "Select Sentiment:", choices = c("Positive", "Negative"), selected = "Positive"),
                imageOutput("wordCloudImageReviews", height = "600px"),
                uiOutput("missingImageMessageReviews"),
                selectInput("yearReviews", "Year:", choices = 2008:2018, width = '100%')
@@ -202,8 +204,8 @@ server <- function(input, output, session) {
            x = "Year", y = "Count",
            subtitle = paste("Analysis of", input$sentimentType, "Sentiment")) +
       theme_minimal() +
-      theme(plot.title = element_text(size = 16, face = "bold"),
-            axis.title = element_text(face = "bold"))
+      theme(plot.title = element_text(size = 16, face = "plain"),
+            axis.title = element_text(face = "plain"))
     ggplotly(p, tooltip = "text")
   })
   
@@ -230,7 +232,8 @@ server <- function(input, output, session) {
   
   # Image rendering based on user input for Users
   output$wordCloudImageUsers <- renderImage({
-    img_path <- paste0("www/wordcloud_", input$yearUsers, "_", "verified", ".png")
+    img_type <- ifelse(input$wordCloudTypeUsers == "Verified", "verified", "unverified")
+    img_path <- paste0("www/wordcloud_", input$yearUsers, "_", img_type, ".png")
     
     # Check if the image exists
     if (file.exists(img_path)) {
@@ -251,7 +254,8 @@ server <- function(input, output, session) {
   
   # Image rendering based on user input for Reviews
   output$wordCloudImageReviews <- renderImage({
-    img_path <- paste0("www/wordcloud_", input$yearReviews, "_", "positive", ".png")
+    img_type <- ifelse(input$wordCloudTypeReviews == "Positive", "positive", "negative")
+    img_path <- paste0("www/wordcloud_", input$yearReviews, "_", img_type, ".png")
     
     # Check if the image exists
     if (file.exists(img_path)) {
