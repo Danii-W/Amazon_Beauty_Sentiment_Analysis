@@ -1,0 +1,63 @@
+body, .content-wrapper, .right-side {
+  background-color: #f4f6f9;
+}
+
+.main-header .logo {
+  background-color: #2e7d32; /* Eco-friendly green */
+  color: white;
+  font-size: 18px;
+}
+
+.navbar-default .navbar-nav > li > a {
+  color: white;
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > .active > a {
+  background-color: #1b5e20; /* Darker green for hover and active state */
+  color: white;
+}
+
+.box {
+  border-top: 3px solid #2e7d32; /* Green for box top border */
+}
+
+.box.box-primary {
+  border-top-color: #2e7d32; /* Green for primary box top border */
+}
+
+.dashboard-header {
+  background-color: #2e7d32; /* Green for dashboard header */
+  color: #ffffff;
+  padding: 10px;
+  text-align: center;
+  font-size: 24px;
+}
+
+.dashboard-body {
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.box-title {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.sidebar-menu .menu-text {
+  font-size: 16px;
+}
+
+.img-responsive {
+  width: 100%;
+  height: auto;
+}
+
+.btn-primary {
+  background-color: #2e7d32; /* Green for buttons */
+  border-color: #2e7d32;
+}
+
+.btn-primary:hover {
+  background-color: #1b5e20; /* Darker green for button hover state */
+  border-color: #1b5e20;
+}
