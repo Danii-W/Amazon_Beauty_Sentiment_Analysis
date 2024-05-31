@@ -1,0 +1,101 @@
+---
+title: "STATS 418 Final Project"
+author: "Dan Wu - 805704019"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r}
+library(tidyverse)
+library(syuzhet)
+library(ggplot2)
+library(plotly)
+data <- read.csv("/Users/dani/MASDS/STATS 418/Final Project/dataset/output.csv")
+head(data)
+```
+
+
+```{r}
+data <- data %>%
+  mutate(sentiment_scores = get_nrc_sentiment(as.character(filtered_reviewText)))
+data <- data %>%
+  mutate(polarity = sentiment_scores$positive - sentiment_scores$negative) %>%
+  mutate(index = row_number())
+```
+
+
+
+
+```{r}
+p <- ggplot(data, aes(x = index, y = polarity)) +
+  geom_line(color = "#909090", alpha = 0.5) +  # dark grey for connecting lines
+  geom_point(color = "#2c3e50") +  # dark grey for points
+  geom_smooth(method = "loess", span = 0.25, se = FALSE, color = "#FFCD14") +
+  labs(title = "Sentiment Polarity", x = "Amazon User", y = "Sentiment") +
+  theme_minimal()
+p
+
+plotly_plot <- ggplotly(p, tooltip = "text")
+```
+
+```{r}
+p <- ggplot(data, aes(x = index, y = polarity, text = paste("Index:", index, "<br>Polarity:", polarity))) +
+  geom_line(color = "#909090", alpha = 1, size = 1.5) +
+  geom_point(color = "#2c3e50", size = 0.5) +  # dark grey for points
+  geom_smooth(method = "loess", span = 0.25, se = FALSE, color = "#FFCD14") +  # bright yellow for the smooth line
+  labs(title = "Sentiment Polarity", x = "Amazon User", y = "Sentiment") +
+  theme_minimal()
+plotly_plot <- ggplotly(p, tooltip = c("text"))  # Ensuring that the tooltip uses the 'text' aesthetic
+plotly_plot <- plotly_plot %>%
+  layout(
+    title = "Sentiment Polarity Interactive Plot",
+    xaxis = list(title = "Amazon User Index"),
+    yaxis = list(title = "Sentiment Polarity"),
+    hovermode = "closest",
+    dragmode = "zoom",
+    plot_bgcolor = "#e5ecf6"  # A light blue background for better visibility
+  )
+
+```
+
+
+```{r}
+plotly_direct <- plot_ly(data, x = ~index, y = ~polarity, type = 'scatter', mode = 'lines+markers',
+                         line = list(color = '#909090'), marker = list(color = '#2c3e50', size = 4)) %>%
+  add_lines() %>%
+  add_trace(y = ~fitted(loess(polarity ~ index)), mode = 'lines', line = list(color = '#FFCD14')) %>%
+  layout(title = "Sentiment Polarity Interactive Plot",
+         xaxis = list(title = "Amazon User Index"),
+         yaxis = list(title = "Sentiment Polarity"),
+         hovermode = "closest",
+         plot_bgcolor = "#e5ecf6")
+
+plotly_direct
+
+```
+
+
+
+```{r}
+library(plotly)
+
+plotly_direct <- plot_ly() %>%
+  add_trace(data = data, x = ~index, y = ~polarity, type = 'scatter', mode = 'lines+markers',
+            line = list(color = '#909090'), marker = list(color = '#2c3e50', size = 4),
+            name = 'Sentiment',
+            text = ~paste("Index:", index, "<br>Polarity:", polarity), hoverinfo = "text") %>%  # Name for legend
+  add_trace(data = data, x = ~index, y = ~fitted(loess(polarity ~ index)), type = 'scatter', mode = 'lines',
+            line = list(color = '#FFCD14', width = 2),
+            name = 'LOESS Smoothing Line') %>%  # Name for legend
+  layout(title = "Sentiment Polarity Interactive Plot",
+         xaxis = list(title = "Amazon User Index"),
+         yaxis = list(title = "Sentiment Polarity"),
+         hovermode = "closest",
+         plot_bgcolor = "#e5ecf6",
+         legend = list(orientation = "h", x = 0.5, y = -0.3, xanchor = 'center'))  # Horizontal legend, above the plot
+
+
+plotly_direct
+
+```
+
