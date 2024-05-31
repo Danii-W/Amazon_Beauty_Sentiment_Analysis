@@ -3,26 +3,30 @@ body, .content-wrapper, .right-side {
 }
 
 .main-header .logo {
-  background-color: #1a237e;
+  background-color: #2e7d32; /* Eco-friendly green */
   color: white;
   font-size: 18px;
 }
 
-.sidebar-menu > li.active > a, .sidebar-menu > li:hover > a {
-  background-color: #3949ab;
+.navbar-default .navbar-nav > li > a {
+  color: white;
+}
+
+.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > .active > a {
+  background-color: #1b5e20; /* Darker green for hover and active state */
+  color: white;
 }
 
 .box {
-  border-top: 3px solid #1a237e;
+  border-top: 3px solid #2e7d32; /* Green for box top border */
 }
 
 .box.box-primary {
-  border-top-color: #1a237e;
+  border-top-color: #2e7d32; /* Green for primary box top border */
 }
 
-/* Additional styling for the dashboard */
 .dashboard-header {
-  background-color: #1a237e;
+  background-color: #2e7d32; /* Green for dashboard header */
   color: #ffffff;
   padding: 10px;
   text-align: center;
@@ -46,4 +50,14 @@ body, .content-wrapper, .right-side {
 .img-responsive {
   width: 100%;
   height: auto;
+}
+
+.btn-primary {
+  background-color: #2e7d32; /* Green for buttons */
+  border-color: #2e7d32;
+}
+
+.btn-primary:hover {
+  background-color: #1b5e20; /* Darker green for button hover state */
+  border-color: #1b5e20;
 }

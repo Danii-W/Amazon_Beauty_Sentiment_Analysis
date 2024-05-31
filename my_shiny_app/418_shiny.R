@@ -9,227 +9,170 @@ library(readr)
 library(plotly)
 library(tidyverse)
 library(syuzhet)
+library(markdown)
+
 
 # Define the UI
-ui <- dashboardPage(
-  skin = "blue",
-  dashboardHeader(title = tagList(
+ui <- navbarPage(
+  title = tagList(
     span(class = "logo-lg", "Amazon Beauty Reviews"),
     icon("leaf")
-  )),
-  dashboardSidebar(
-    sidebarMenu(id = "tabs",
-                menuItem("Welcome", tabName = "welcome", icon = icon("home")),
-                menuItem("Time Series", tabName = "timeSeries", icon = icon("line-chart")),
-                menuItem("Polarity", tabName = "polarity", icon = icon("dashboard")),
-                menuItem("Word Cloud - Users", tabName = "wordcloudUsers", icon = icon("cloud")),
-                menuItem("Word Cloud - Reviews", tabName = "wordcloudReviews", icon = icon("cloud")),
-                menuItem("Dataset", tabName = "dataset", icon = icon("database")),
-                menuItem("Team", tabName = "team", icon = icon("users")),
-                conditionalPanel(
-                  condition = "input.tabs === 'wordcloudUsers'",
-                  selectInput("yearUsers", "Year:", choices = 2008:2018)
-                ),
-                conditionalPanel(
-                  condition = "input.tabs === 'wordcloudReviews'",
-                  selectInput("yearReviews", "Year:", choices = 2008:2018)
-                ),
-                conditionalPanel(
-                  condition = "input.tabs === 'timeSeries' || input.tabs === 'polarity'",
-                  div(style = "margin-top: 20px;")
-                )
-    )
   ),
-  dashboardBody(
-    tags$head(
-      tags$link(rel = "stylesheet", type = "text/css", href = "custom.css"),
-      tags$style(HTML("
-        .sidebar-mini.sidebar-collapse .shiny-input-container {
-          display: block;
-          width: 100%;
-        }
-        .sidebar-mini.sidebar-collapse .selectize-input {
-          width: 100%;
-        }
-      ")),
-      tags$script(HTML('
-        $(document).on("shiny:inputchanged", function(event) {
-          if (event.name === "toggleExplanation") {
-            var wordCloudBox = $("#wordCloudBox");
-            var explanationBox = $("#explanationBox");
-            if (event.value) {
-              wordCloudBox.hide();
-              explanationBox.show();
-            } else {
-              wordCloudBox.show();
-              explanationBox.hide();
-            }
-          }
-        });
-      '))
-    ),
-    tabItems(
-      tabItem(tabName = "welcome",
-              fluidRow(
-                box(
-                  title = "Welcome to Amazon Beauty Reviews Dashboard", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  includeMarkdown("welcome.md")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Interesting Findings", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  # Add some example content here, such as text, images, or charts
-                  p("Here you can add some interesting findings or highlights from the analysis."),
-                  img(src = "interesting_finding.png", height = "300px")
-                )
-              )
-      ),
-      tabItem(tabName = "timeSeries",
-              fluidRow(
-                box(
-                  title = "Sentiment Over Time", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12, 
-                  height = "700px",
-                  plotlyOutput("sentimentPlot"),
-                  selectInput("sentimentType", "Choose Sentiment Analysis:",
-                              choices = c("General" = "general",
-                                          "Anger" = "anger",
-                                          "Anticipation" = "anticipation",
-                                          "Disgust" = "disgust",
-                                          "Fear" = "fear",
-                                          "Joy" = "joy",
-                                          "Sadness" = "sadness",
-                                          "Surprise" = "surprise",
-                                          "Trust" = "trust"),
-                              selected = "general")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Explanation",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  id = "timeSeriesExplanationBox",
-                  textOutput("timeSeriesExplanationText")
-                )
-              )
-      ),
-      tabItem(tabName = "polarity",
-              fluidRow(
-                box(
-                  title = "Polarity",
-                  width = 12,
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  sliderInput("numReviews", "Number of Reviews:", min = 1, max = 2000, value = 1000),
-                  plotlyOutput("polarityPlot")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Explanation",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  id = "polarityExplanationBox",
-                  textOutput("polarityExplanationText")
-                )
-              )
-      ),
-      tabItem(tabName = "wordcloudUsers",
-              fluidRow(
-                box(
-                  title = "Word Cloud - Users", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  height = "700px",  # Adjust the height to make the box larger
-                  id = "wordCloudBoxUsers",  # Add an ID for toggling
-                  imageOutput("wordCloudImageUsers", height = "600px"),  # Ensure the image respects the height
-                  div(class = "wordcloud-toggle", actionButton("toggleImageUsers", "Toggle View")),
-                  uiOutput("missingImageMessageUsers")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Explanation",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  id = "explanationBoxUsers",  # Add an ID for toggling
-                  textOutput("explanationTextUsers")
-                )
-              )
-      ),
-      tabItem(tabName = "wordcloudReviews",
-              fluidRow(
-                box(
-                  title = "Word Cloud - Reviews", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  height = "700px",  # Adjust the height to make the box larger
-                  id = "wordCloudBoxReviews",  # Add an ID for toggling
-                  imageOutput("wordCloudImageReviews", height = "600px"),  # Ensure the image respects the height
-                  div(class = "wordcloud-toggle", actionButton("toggleImageReviews", "Toggle View")),
-                  uiOutput("missingImageMessageReviews")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Explanation",
-                  status = "primary",
-                  solidHeader = TRUE,
-                  width = 12,
-                  collapsible = TRUE,
-                  collapsed = TRUE,
-                  id = "explanationBoxReviews",  # Add an ID for toggling
-                  textOutput("explanationTextReviews")
-                )
-              )
-      ),
-      tabItem(tabName = "dataset",
-              fluidRow(
-                box(
-                  title = "About the Dataset", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  includeMarkdown("dataset.md"),
-                  downloadButton("downloadData", "Download Dataset")
-                )
-              )
-      ),
-      tabItem(tabName = "team",
-              fluidRow(
-                box(
-                  title = "About the Team", 
-                  status = "primary", 
-                  solidHeader = TRUE,
-                  width = 12,
-                  includeMarkdown("team.md")
-                )
-              )
-      )
-    )
+  theme = shinythemes::shinytheme("flatly"),
+  
+  tabPanel("Welcome",
+           fluidRow(
+             box(
+               title = "Welcome to Amazon Beauty Reviews Dashboard", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               includeMarkdown("welcome.md")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
   ),
-  title = "Amazon Beauty Reviews"
+  
+  tabPanel("Time Series",
+           fluidRow(
+             box(
+               title = "Sentiment Over Time", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12, 
+               height = "700px",
+               plotlyOutput("sentimentPlot"),
+               selectInput("sentimentType", "Choose Sentiment Analysis:",
+                           choices = c("General" = "general",
+                                       "Anger" = "anger",
+                                       "Anticipation" = "anticipation",
+                                       "Disgust" = "disgust",
+                                       "Fear" = "fear",
+                                       "Joy" = "joy",
+                                       "Sadness" = "sadness",
+                                       "Surprise" = "surprise",
+                                       "Trust" = "trust"),
+                           selected = "general")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "Explanation",
+               status = "primary",
+               solidHeader = TRUE,
+               width = 12,
+               textOutput("timeSeriesExplanationText")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
+  ),
+  
+  tabPanel("Polarity",
+           fluidRow(
+             box(
+               title = "Polarity",
+               width = 12,
+               status = "primary", 
+               solidHeader = TRUE,
+               sliderInput("numReviews", "Number of Reviews:", min = 1, max = 2000, value = 1000, width = '100%'),
+               plotlyOutput("polarityPlot")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "Explanation",
+               status = "primary",
+               solidHeader = TRUE,
+               width = 12,
+               textOutput("polarityExplanationText")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
+  ),
+  
+  tabPanel("Word Cloud - User Type",
+           fluidRow(
+             box(
+               title = "Word Cloud - User Type", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               height = "700px",
+               selectInput("yearUsers", "Year:", choices = 2008:2018, width = '100%'),
+               radioButtons("wordCloudTypeUsers", "Select Type:", choices = c("Verified", "Unverified"), selected = "Verified"),
+               imageOutput("wordCloudImageUsers", height = "600px"),
+               uiOutput("missingImageMessageUsers")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "Explanation",
+               status = "primary",
+               solidHeader = TRUE,
+               width = 12,
+               textOutput("explanationTextUsers")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
+  ),
+  
+  tabPanel("Word Cloud - Sentiment Polarity",
+           fluidRow(
+             box(
+               title = "Word Cloud - Sentiment Polarity", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               height = "700px",
+               selectInput("yearReviews", "Year:", choices = 2008:2018, width = '100%'),
+               radioButtons("wordCloudTypeReviews", "Select Sentiment:", choices = c("Positive", "Negative"), selected = "Positive"),
+               imageOutput("wordCloudImageReviews", height = "600px"),
+               uiOutput("missingImageMessageReviews")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "Explanation",
+               status = "primary",
+               solidHeader = TRUE,
+               width = 12,
+               textOutput("explanationTextReviews")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
+  ),
+  
+  tabPanel("Dataset",
+           fluidRow(
+             box(
+               title = "Download Dataset", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               downloadButton("downloadData", "Download Dataset")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "About the Dataset", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               includeMarkdown("dataset.md")
+             )
+           ),
+           fluidRow(
+             box(
+               title = "View Dataset", 
+               status = "primary", 
+               solidHeader = TRUE,
+               width = 12,
+               selectInput("numRows", "Number of Rows to Display:", choices = c(5, 10, 20, 25, 50), selected = 5, width = '100%'),
+               tableOutput("dataTable")
+             )
+           ),
+           div(style = "height: 200px;") # Add a spacer div at the bottom
+  )
 )
 
 # Define server logic
@@ -237,7 +180,7 @@ server <- function(input, output, session) {
   # Load and preprocess the data
   df <- read_csv("review_data.csv")
   df_tibble <- as_tibble(df)
-  nrc_lexicon <- get_sentiments("nrc")
+  nrc_lexicon <- read_csv("nrc_lexicon.csv")  # Load the lexicon from the local file
   
   # Reactive data for sentiment and emotion analysis
   sentiment_data <- reactive({
@@ -258,16 +201,16 @@ server <- function(input, output, session) {
   # Plot for sentiment and emotions
   output$sentimentPlot <- renderPlotly({
     data <- sentiment_data()
-    p <- ggplot(data, aes(x = year, y = count, color = sentiment, group = sentiment)) +
+    p <- ggplot(data, aes(x = year, y = count, color = sentiment, group = sentiment, text = paste("Year:", year, "<br>Count:", count, "<br>Sentiment:", sentiment))) +
       geom_line(size = 1) +
       geom_point(size = 3) +
       labs(title = paste("Sentiment Over Time:", input$sentimentType),
            x = "Year", y = "Count",
            subtitle = paste("Analysis of", input$sentimentType, "Sentiment")) +
       theme_minimal() +
-      theme(plot.title = element_text(size = 16, face = "bold"),
-            axis.title = element_text(face = "bold"))
-    ggplotly(p)
+      theme(plot.title = element_text(size = 16, face = "plain"),
+            axis.title = element_text(face = "plain"))
+    ggplotly(p, tooltip = "text")
   })
   
   output$polarityPlot <- renderPlotly({
@@ -291,96 +234,75 @@ server <- function(input, output, session) {
              legend = list(orientation = "h", x = 0.5, y = -0.3, xanchor = 'center'))
   })
   
-  # Define reactive values for toggling images
-  imageTypeUsers <- reactiveVal("verified")
-  imageTypeReviews <- reactiveVal("positive")
-  
-  # Toggle button to switch images for Users
-  observeEvent(input$toggleImageUsers, {
-    if (imageTypeUsers() == "verified") {
-      imageTypeUsers("unverified")
-    } else {
-      imageTypeUsers("verified")
-    }
-  })
-  
-  # Toggle button to switch images for Reviews
-  observeEvent(input$toggleImageReviews, {
-    if (imageTypeReviews() == "positive") {
-      imageTypeReviews("negative")
-    } else {
-      imageTypeReviews("positive")
-    }
-  })
-  
   # Image rendering based on user input for Users
   output$wordCloudImageUsers <- renderImage({
-    img_path <- paste0("www/wordcloud_", input$yearUsers, "_", imageTypeUsers(), ".png")
+    img_type <- ifelse(input$wordCloudTypeUsers == "Verified", "verified", "unverified")
+    img_path <- paste0("www/wordcloud_", input$yearUsers, "_", img_type, ".png")
     
     # Check if the image exists
     if (file.exists(img_path)) {
       list(src = img_path,
            contentType = 'image/png',
            alt = "This is a word cloud image.",
-           width = "100%",   # Set explicit width
-           height = "600px")  # Set explicit height
+           width = "100%",
+           height = "650px")
     } else {
       # Return a placeholder or message if the image does not exist
       list(src = "www/image_not_available.png",
            contentType = 'image/png',
            alt = "Image not available.",
-           width = "100%",   # Set explicit width
-           height = "600px")  # Set explicit height
+           width = "100%",
+           height = "650px")
     }
   }, deleteFile = FALSE)
   
   # Image rendering based on user input for Reviews
   output$wordCloudImageReviews <- renderImage({
-    img_path <- paste0("www/wordcloud_", input$yearReviews, "_", imageTypeReviews(), ".png")
+    img_type <- ifelse(input$wordCloudTypeReviews == "Positive", "positive", "negative")
+    img_path <- paste0("www/wordcloud_", input$yearReviews, "_", img_type, ".png")
     
     # Check if the image exists
     if (file.exists(img_path)) {
       list(src = img_path,
            contentType = 'image/png',
            alt = "This is a word cloud image.",
-           width = "100%",   # Set explicit width
-           height = "600px")  # Set explicit height
+           width = "100%",
+           height = "650px")
     } else {
       # Return a placeholder or message if the image does not exist
       list(src = "www/image_not_available.png",
            contentType = 'image/png',
            alt = "Image not available.",
-           width = "100%",   # Set explicit width
-           height = "600px")  # Set explicit height
+           width = "100%",
+           height = "650px")
     }
   }, deleteFile = FALSE)
   
   # Explanation text for wordcloud Users
   output$explanationTextUsers <- renderText({
-    "This word cloud represents the most common words found in the reviews for the selected year and user type. The size of each word indicates its frequency in the reviews. Larger words appear more frequently in the text, giving a visual representation of key themes and sentiments expressed by customers."
+    "This word cloud represents the most common words found in the reviews for the selected year and user type. The size of each word indicates its frequency in the reviews. Larger words appear more frequently in the text, giving a visual representation of key themes and sentiments expressed by customers. For certain years, the plot for the selected year does not exist due to an unidentified reason."
   })
   
   # Explanation text for wordcloud Reviews
   output$explanationTextReviews <- renderText({
-    "This word cloud represents the most common words found in the reviews for the selected year and review type. The size of each word indicates its frequency in the reviews. Larger words appear more frequently in the text, giving a visual representation of key themes and sentiments expressed by customers."
+    "This word cloud represents the most common words found in the reviews for the selected year and review type. The size of each word indicates its frequency in the reviews. Larger words appear more frequently in the text, giving a visual representation of key themes and sentiments expressed by customers. For certain years, the plot for the selected year does not exist due to an abundance of non-polarizing reviews."
   })
   
   # Explanation text for time series
   output$timeSeriesExplanationText <- renderText({
-    "This time series chart shows the sentiment over time for the selected sentiment type. It allows you to observe trends and changes in sentiment across different years."
+    "This time series chart shows the sentiment over time for the selected sentiment type. 'Count' on the y-axis represents the number of reviews expressing the sentiment, while the x-axis represents the year. It allows you to observe trends and changes in sentiment across different years."
   })
   
   # Explanation text for polarity
   output$polarityExplanationText <- renderText({
-    "This chart displays the sentiment polarity for Amazon reviews. It helps visualize the positive and negative sentiments expressed in the reviews over time."
+    "This chart displays the sentiment polarity for Amazon reviews. 'Index' on the x-axis represents the position of each review in the dataset. 'Sentiment polarity' on the y-axis indicates the sentiment score, with positive values representing positive sentiment and negative values representing negative sentiment. Each point on the plot represents an individual review's sentiment score."
   })
   
-  # Toggle explanation visibility
-  observeEvent(input$toggleExplanation, {
-    updateActionButton(session, "toggleExplanation", 
-                       label = ifelse(input$toggleExplanation %% 2 == 0, "Show Explanation", "Hide Explanation"))
-    session$sendCustomMessage("toggleExplanation", input$toggleExplanation %% 2 == 1)
+  # Render the table based on the number of rows selected
+  output$dataTable <- renderTable({
+    head(df_tibble, n = as.numeric(input$numRows))
   })
+  
   # Download handler for dataset
   output$downloadData <- downloadHandler(
     filename = function() {
