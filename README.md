@@ -73,7 +73,9 @@ Amazon_Beauty_Sentiment_Analysis/
 
 
 
-This README.md provides a comprehensive guide to understanding, installing, and using the project. You can replace placeholders such as yourusername with actual names as needed.
+This `README.md` provides a comprehensive guide to understanding, installing, and using the project. You can replace placeholders such as `yourusername` with actual names as needed.
+
+
 
 Note: This is a private student project. Please do not use it for any personal or commercial purposes.
 
