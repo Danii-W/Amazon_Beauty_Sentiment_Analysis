@@ -34,6 +34,8 @@ This project provides an interactive dashboard for analyzing Amazon beauty produ
 2. Access the dashboard in your web browser.
 
 ## File Structure
+
+```bash
 Amazon_Beauty_Sentiment_Analysis/
 ├── data_cleaning/
 ├── dataset/
