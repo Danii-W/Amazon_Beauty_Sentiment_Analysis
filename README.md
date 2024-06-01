@@ -55,7 +55,7 @@ Amazon_Beauty_Sentiment_Analysis/
 ├── polarity_plot_dani/
 ├── time_series_yuhuan/
 ├── wordcloud_anum/
-├── worldcloud_cindy/
+├── wordcloud_cindy/
 └── README.md
 ```
 
