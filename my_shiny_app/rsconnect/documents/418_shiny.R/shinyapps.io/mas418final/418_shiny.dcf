@@ -5,6 +5,6 @@ account: mas418final
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 12105123
-bundleId: 8686143
+bundleId: 8686451
 url: https://mas418final.shinyapps.io/418_shiny/
 version: 1
