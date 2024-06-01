@@ -23,7 +23,7 @@ This project provides an interactive dashboard for analyzing Amazon beauty produ
 3. Install the required R packages:
    ```bash
    install.packages(c("shiny", "shinydashboard", "shinydashboardPlus", "tidytext", "dplyr", "tidyr", "ggplot2", "readr", "plotly", "tidyverse", "syuzhet", "shinythemes", "markdown"))
-
+   ```
 
 ## Usage
 1. Run the Shiny app:
