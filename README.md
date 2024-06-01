@@ -57,7 +57,7 @@ Amazon_Beauty_Sentiment_Analysis/
 ├── wordcloud_anum/
 ├── worldcloud_cindy/
 └── README.md
-
+```
 
 
 ##  Contributors
