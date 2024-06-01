@@ -10,7 +10,6 @@ This project provides an interactive dashboard for analyzing Amazon beauty produ
 - **Word Cloud - User Type**: Word clouds for verified and unverified user reviews.
 - **Word Cloud - Sentiment Polarity**: Word clouds for positive and negative reviews.
 - **Dataset**: Download and view the dataset used in the analysis.
-- **Theme Selector**: Change the dashboard color scheme (default, yellow, pink, green, teal).
 
 ## Installation Instructions
 1. Clone the repository:
@@ -18,14 +17,17 @@ This project provides an interactive dashboard for analyzing Amazon beauty produ
    git clone https://github.com/yourusername/Amazon_Beauty_Sentiment_Analysis.git
 
 2. Navigate to the 'my_shiny_app' directory:
+   ```bash
    cd Amazon_Beauty_Sentiment_Analysis/my_shiny_app
 
 3. Install the required R packages:
+   ```bash
    install.packages(c("shiny", "shinydashboard", "shinydashboardPlus", "tidytext", "dplyr", "tidyr", "ggplot2", "readr", "plotly", "tidyverse", "syuzhet", "shinythemes", "markdown"))
 
 
 ## Usage
 1. Run the Shiny app:
+   ```bash
    library(shiny)
    runApp('418_shiny.R')
    
