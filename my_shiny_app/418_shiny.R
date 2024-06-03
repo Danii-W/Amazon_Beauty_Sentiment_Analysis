@@ -167,7 +167,7 @@ ui <- navbarPage(
                status = "primary", 
                solidHeader = TRUE,
                width = 12,
-               selectInput("numRows", "Number of Rows to Display:", choices = c(5, 10, 20, 25, 50), selected = 5, width = '100%'),
+               selectInput("numRows", "Number of Rows to Display:", choices = c(5, 10, 15, 20, 25), selected = 5, width = '100%'),
                tableOutput("dataTable")
              )
            ),
