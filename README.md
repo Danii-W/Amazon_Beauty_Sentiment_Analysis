@@ -11,6 +11,9 @@ This project provides an interactive dashboard for analyzing Amazon beauty produ
 - **Word Cloud - Sentiment Polarity**: Word clouds for positive and negative reviews.
 - **Dataset**: Download and view the dataset used in the analysis.
 
+## Dashboard Link
+Access the dashboard [here](https://mas418final.shinyapps.io/418_shiny/).
+
 ## Installation Instructions
 1. Clone the repository:
    ```bash
